@@ -16,12 +16,20 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    // 🔒 Prevent multiple submissions
+    if (loading) return;
+
     setError("");
 
     if (!isFormValid) return;
 
+    setLoading(true);
+
     try {
-      setLoading(true);
+      // ⏱ Handle Render cold start
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
 
       const res = await fetch(`${BASE_URL}/auth/login`, {
         method: "POST",
@@ -29,7 +37,10 @@ export default function Login() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       const data = await res.json();
 
@@ -39,14 +50,18 @@ export default function Login() {
         return;
       }
 
-      // Store token & user data
+      // ✅ Store token & user data
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
       navigate("/profile");
 
     } catch (err) {
-      setError("Server not reachable");
+      if (err.name === "AbortError") {
+        setError("Server is waking up, please try again");
+      } else {
+        setError("Login failed. Please try again.");
+      }
     } finally {
       setLoading(false);
     }

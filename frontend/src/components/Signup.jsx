@@ -46,12 +46,20 @@ export default function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // 🔒 Prevent multiple submits
+    if (loading) return;
+
     setServerError("");
 
     if (!validate()) return;
 
+    setLoading(true);
+
     try {
-      setLoading(true);
+      // ⏱ Handle Render cold start
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
 
       const res = await fetch(`${BASE_URL}/auth/signup`, {
         method: "POST",
@@ -59,7 +67,10 @@ export default function Signup() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(form),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       const data = await res.json();
 
@@ -73,7 +84,11 @@ export default function Signup() {
       navigate("/login");
 
     } catch (error) {
-      setServerError("Server not reachable");
+      if (error.name === "AbortError") {
+        setServerError("Server is waking up, please try again");
+      } else {
+        setServerError("Signup failed. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
