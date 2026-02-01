@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/signup.css";
+import BASE_URL from "../utils/api";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -15,6 +16,8 @@ export default function Signup() {
   });
 
   const [errors, setErrors] = useState({});
+  const [serverError, setServerError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const validate = () => {
     let temp = {};
@@ -41,11 +44,38 @@ export default function Signup() {
     form.company &&
     form.agency;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validate()) {
-      localStorage.setItem("user", JSON.stringify(form));
-      navigate("/profile");
+    setServerError("");
+
+    if (!validate()) return;
+
+    try {
+      setLoading(true);
+
+      const res = await fetch(`${BASE_URL}/auth/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setServerError(data.message || "Signup failed");
+        setLoading(false);
+        return;
+      }
+
+      alert("Account created successfully!");
+      navigate("/login");
+
+    } catch (error) {
+      setServerError("Server not reachable");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -60,6 +90,7 @@ export default function Signup() {
         <form className="signup-form" onSubmit={handleSubmit}>
           <input
             placeholder="Full Name *"
+            value={form.name}
             onChange={(e) =>
               setForm({ ...form, name: e.target.value })
             }
@@ -68,6 +99,7 @@ export default function Signup() {
 
           <input
             placeholder="Phone number *"
+            value={form.phone}
             onChange={(e) =>
               setForm({ ...form, phone: e.target.value })
             }
@@ -76,6 +108,7 @@ export default function Signup() {
 
           <input
             placeholder="Email address *"
+            value={form.email}
             onChange={(e) =>
               setForm({ ...form, email: e.target.value })
             }
@@ -85,6 +118,7 @@ export default function Signup() {
           <input
             type="password"
             placeholder="Password *"
+            value={form.password}
             onChange={(e) =>
               setForm({ ...form, password: e.target.value })
             }
@@ -93,6 +127,7 @@ export default function Signup() {
 
           <input
             placeholder="Company name *"
+            value={form.company}
             onChange={(e) =>
               setForm({ ...form, company: e.target.value })
             }
@@ -107,6 +142,7 @@ export default function Signup() {
                 type="radio"
                 name="agency"
                 value="Yes"
+                checked={form.agency === "Yes"}
                 onChange={(e) =>
                   setForm({ ...form, agency: e.target.value })
                 }
@@ -119,6 +155,7 @@ export default function Signup() {
                 type="radio"
                 name="agency"
                 value="No"
+                checked={form.agency === "No"}
                 onChange={(e) =>
                   setForm({ ...form, agency: e.target.value })
                 }
@@ -128,15 +165,14 @@ export default function Signup() {
           </div>
 
           <small>{errors.agency}</small>
+          <small className="server-error">{serverError}</small>
 
           <button
             type="submit"
-            className={`signup-btn ${
-              isFormValid ? "active" : ""
-            }`}
-            disabled={!isFormValid}
+            className={`signup-btn ${isFormValid ? "active" : ""}`}
+            disabled={!isFormValid || loading}
           >
-            Create Account
+            {loading ? "Creating..." : "Create Account"}
           </button>
         </form>
       </div>

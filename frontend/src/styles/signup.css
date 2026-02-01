@@ -1,13 +1,18 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
+  padding: 0;
+  overflow-x: hidden;
   font-family: Arial, sans-serif;
-  background: #f4f5f7;
-  overflow: hidden;
 }
 
 .signup-page {
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
+  background: #f4f5f7;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -15,39 +20,21 @@ body {
 
 .signup-card {
   width: 360px;
-  height: 650px;
-  background: #ffffff;
+  max-width: 92vw;
+  background: #fff;
   border-radius: 12px;
-  padding: 28px;
+  padding: 40px 28px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-  display: flex;
-  flex-direction: column;
-}
-
-.signup-card h2 {
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 1.3;
-  margin-bottom: 22px;
-}
-
-.signup-form {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
 }
 
 .signup-form input {
-  height: 44px;
+  width: 100%;
+  height: 42px;
   padding: 0 12px;
   margin-top: 14px;
   border-radius: 6px;
-  border: 1px solid #d6d6d6;
+  border: 1px solid #ddd;
   font-size: 14px;
-}
-
-.signup-form input::placeholder {
-  color: #777;
 }
 
 .signup-form input:focus {
@@ -56,9 +43,8 @@ body {
 }
 
 .signup-form small {
-  font-size: 12px;
   color: red;
-  margin-top: 4px;
+  font-size: 12px;
 }
 
 .agency-title {
@@ -69,43 +55,49 @@ body {
 
 .agency-options {
   display: flex;
-  align-items: center;
   gap: 28px;
   margin-top: 10px;
 }
 
 .agency-options label {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  align-items: center;        
+  gap: 8px;
   font-size: 14px;
   cursor: pointer;
 }
 
 .agency-options input[type="radio"] {
-  width: 18px;
-  height: 18px;
-  accent-color: #6c3df4;
-  cursor: pointer;
+  margin: 0;                  
+  width: 16px;
+  height: 16px;
+  accent-color: #6c3df4;      
 }
 
 .signup-btn {
-  margin-top: auto;
+  width: 100%;
   height: 46px;
+  margin-top: 24px;
   border-radius: 6px;
   border: none;
-  background: #e6e6e6;
-  color: #b5b5b5;
   font-size: 14px;
   cursor: not-allowed;
+  background: #e6e6e6;
+  color: #999;
 }
 
 .signup-btn.active {
   background: #6c3df4;
-  color: #ffffff;
+  color: #fff;
   cursor: pointer;
 }
 
 .signup-btn.active:hover {
   background: #5a2fe0;
+}
+
+@media (max-height: 700px) {
+  .signup-card {
+    padding: 32px 24px;
+  }
 }
