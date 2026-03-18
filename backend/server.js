@@ -7,13 +7,12 @@ dotenv.config();
 connectDB();
 
 const app = express();
-app.use(
-  cors({
-    origin: "https://educase-rosy.vercel.app", // your frontend URL
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);app.use(express.json());
+
+app.use(cors());
+
+app.options("*", cors());
+
+app.use(express.json());
 
 app.use("/api/auth", require("./routes/authRoutes"));
 
