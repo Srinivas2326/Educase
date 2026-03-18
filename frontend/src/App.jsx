@@ -15,6 +15,7 @@ export default function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
 
+
         {/* Protected Route */}
         <Route
           path="/profile"
