@@ -17,7 +17,6 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    // 🔒 Prevent multiple submissions
     if (loading) return;
 
     setError("");
@@ -27,11 +26,12 @@ export default function Login() {
     setLoading(true);
 
     try {
-      // ⏱ Handle Render cold start
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000);
 
-      const res = await fetch(`${BASE_URL}/auth/login`, {
+      // ✅ Increased timeout (IMPORTANT FIX)
+      const timeoutId = setTimeout(() => controller.abort(), 40000);
+
+      const res = await fetch(`${BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -50,7 +50,6 @@ export default function Login() {
         return;
       }
 
-      // ✅ Store token & user data
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
@@ -58,7 +57,12 @@ export default function Login() {
 
     } catch (err) {
       if (err.name === "AbortError") {
-        setError("Server is waking up, please try again");
+        setError("Server is waking up... retrying");
+
+        // ✅ Auto retry after 5 sec
+        setTimeout(() => {
+          handleLogin(e);
+        }, 5000);
       } else {
         setError("Login failed. Please try again.");
       }
@@ -94,7 +98,7 @@ export default function Login() {
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          <small>{error}</small>
+          <small style={{ color: "red" }}>{error}</small>
 
           <button
             type="submit"
