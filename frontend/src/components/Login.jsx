@@ -20,47 +20,37 @@ export default function Login() {
     if (loading) return;
 
     setError("");
-
-    if (!isFormValid) return;
-
     setLoading(true);
 
     try {
-      const controller = new AbortController();
-
-      const timeoutId = setTimeout(() => controller.abort(), 60000);
-
       const res = await fetch(`${BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
-        signal: controller.signal,
       });
-
-      clearTimeout(timeoutId);
 
       const data = await res.json();
 
+      console.log("API RESPONSE:", data);
+
       if (!res.ok) {
         setError(data.message || "Invalid email or password");
+        setLoading(false);
         return;
       }
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      console.log("Login success:", data);
+      console.log("Token stored:", data.token);
 
-      navigate("/profile");
+      window.location.href = "/profile";
 
     } catch (err) {
-      if (err.name === "AbortError") {
-        setError("Server is starting... please try again");
-      } else {
-        setError("Login failed. Please try again.");
-      }
+      console.error(err);
+      setError("Server is slow. Please try again.");
     } finally {
       setLoading(false);
     }
