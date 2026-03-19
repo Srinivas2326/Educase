@@ -92,10 +92,10 @@ Logout clears token and user data
 🌍 Live Deployment
 
 Frontend (Vercel):
-👉 [https://your-frontend-url.vercel.app](https://educase-khaki.vercel.app/)
+👉 https://educase-rosy.vercel.app/
 
 Backend (Render):
-👉 [https://your-backend-url.onrender.com](https://educase-nqc5.onrender.com)
+👉 https://educase-nqc5.onrender.com
 
 ⚙️ Environment Variables (Backend)
 
