@@ -58,7 +58,6 @@ export default function Signup() {
     try {
       const controller = new AbortController();
 
-      // ✅ Increased timeout
       const timeoutId = setTimeout(() => controller.abort(), 40000);
 
       const res = await fetch(`${BASE_URL}/api/auth/signup`, {
@@ -87,7 +86,6 @@ export default function Signup() {
       if (error.name === "AbortError") {
         setServerError("Server is waking up... retrying");
 
-        // ✅ Auto retry
         setTimeout(() => {
           handleSubmit(e);
         }, 5000);

@@ -28,8 +28,7 @@ export default function Login() {
     try {
       const controller = new AbortController();
 
-      // ✅ Increased timeout (IMPORTANT FIX)
-      const timeoutId = setTimeout(() => controller.abort(), 40000);
+      const timeoutId = setTimeout(() => controller.abort(), 60000);
 
       const res = await fetch(`${BASE_URL}/api/auth/login`, {
         method: "POST",
@@ -46,23 +45,19 @@ export default function Login() {
 
       if (!res.ok) {
         setError(data.message || "Invalid email or password");
-        setLoading(false);
         return;
       }
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
+      console.log("Login success:", data);
+
       navigate("/profile");
 
     } catch (err) {
       if (err.name === "AbortError") {
-        setError("Server is waking up... retrying");
-
-        // ✅ Auto retry after 5 sec
-        setTimeout(() => {
-          handleLogin(e);
-        }, 5000);
+        setError("Server is starting... please try again");
       } else {
         setError("Login failed. Please try again.");
       }
@@ -99,6 +94,12 @@ export default function Login() {
           />
 
           <small style={{ color: "red" }}>{error}</small>
+
+          {loading && (
+            <p style={{ fontSize: "12px", color: "#555" }}>
+              Connecting to server...
+            </p>
+          )}
 
           <button
             type="submit"

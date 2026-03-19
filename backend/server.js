@@ -8,7 +8,6 @@ connectDB();
 
 const app = express();
 
-// ✅ Improved CORS
 app.use(cors({
   origin: "*",
   methods: ["GET", "POST", "PUT", "DELETE"],
@@ -17,12 +16,11 @@ app.use(cors({
 
 app.use(express.json());
 
-// ✅ Test route (to keep server alive / check)
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-// ✅ Routes
+// Routes
 app.use("/api/auth", require("./routes/authRoutes"));
 
 const PORT = process.env.PORT || 5000;
